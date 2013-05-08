@@ -1,0 +1,75 @@
+= Appunti utili: integrazione con pentaho-bi
+Fiorenzo Pizza<fiorenzo.pizza@gmail.com>
+:imagesdir: assets
+:homepage: http://twiliofaces.org
+
+== Appunti utili per gestire integrazione con pentaho bi
+
+Lo scopo di questo post è quello di raccogliere le informazioni utili ad effettuare l'integrazione di applicazioni java
+con pentaho-bi, allo scopo di lanciare job recuperati dal repository pentaho.
+La nota dolente da cui partire: non esiste in rete documentazione esaustiva sul processo di integrazione e 
+tutte le infoamzioni raccolte sono parziale, incomplete ma utili a portare a termine l'integrazione.
+
+== Il nostro client usa librerie di Spoon e si comporta come Spoon
+
+Questa doverosa premessa serve a capire le possibili integrazioni col server pentaho:
+
+. e' possibile scaricare da repository la definizione del job (nel nostro caso si tratta di un repository enteprise - 
+un PurRepository - ma in modo simile è possibile utilizzare db repository o su filesystem.
+. e' possibile schedulare sul server pentaho stesso l'esecuzione di un job, passandogli la definizione del job, i 
+parametri e il repository da utilizzare.
+
+In entrambi i casi si utilizzano le librerie di Spoon (sono molte e di seguito solo elencate) e la loro esecuzione 
+crea in locale un "mini sever" che si interfaccia con repository, server pentaho.
+
+Le prime esperienze di lancio dei job le abbiamo effettuate in eclipse, mentre la vera integrazione l'abbiamo effettuata 
+in jboss7 (a dire la verità non siamo riusciti ad isolare l'esecuzione delle librerie Spoon e abbiamo dovuto lanciare la
+loro esecuzione in in una classe esterna al container):
+il problema evidenziato nasce dal fatto che le librerie di spoon contengono "componenti attivi" che in fase di deploy vengono
+trattati dall'application server come se fossero un applicazione reale e non librerie.
+Abbiamo anche provato a gestirle come moduli di jboss, ma purtroppo non si comportavano + come librerie attive.
+
+Da notare che all'interno delle librerie ci sono anche classi con stesso namespace e quindi non deployabili correttamente.
+
+== le due possibili invocazioni: locale o remota (schedulata)
+
+Tornando alla pura esecuzione dei job, di seguito le due modalità di gestione dei job.
+
+Esecuzione in locale:
+
+----
+
+----
+
+
+Esecuzione in remoto (tramite schedulazione):
+
+----
+
+----
+
+
+== Note di configurazione dei server in cui avviene l'esecuzione dei job
+
+Alcuni importanti note:
+
+. cartella +.kettle+ e file di properties
+. plugins e librerie usate da spoon
+. file di licenza
+. file dei repository
+
+== Note finali
+
+Nonostante Pentaho sia un importante progetto open source per la BI, con una dotazione di strumenti di assoluto valore,
+la mancanza di documentazione sulla possibile interazione rende +veramente critico+ lo sviluppo di customizzazioni.
+Ci auguriamo che tale mancanza venga in futuro colmata, rendendo molto piu' semplice tale processo di integrazione.
+
+== Links utili
+
+. post del tipo italiano che ci ha illustrato la possibilità di invocare job (localmente) usando le definizioni contenute
+nei repository
+. utilissimo post del forum che ci ha permesso di sviluppare la schedulazione remota dei job
+. link alla documentazione sul progetto Spoon
+. link alla documentazione sul componente Carte (usato per schedulare job remoti)
+. link alle api java di pentaho
+. link al sorgente su bitbucket per server Carte
