@@ -1,0 +1,8 @@
+= Appunti CDI per creare una estensione per custom scope
+Fiorenzo Pizza<fiorenzo.pizza@gmail.com>
+:imagesdir: assets
+:homepage: http://twiliofaces.org
+
+== appunti per creare estensioni cdi, per custom scope
+
+Ripercorriamo la storia del TwilioContext.
