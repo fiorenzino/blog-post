@@ -39,12 +39,188 @@ Esecuzione in locale:
 
 ----
 
+import org.pentaho.di.core.KettleEnvironment;
+import org.pentaho.di.core.logging.LogChannel;
+import org.pentaho.di.core.logging.LogChannelInterface;
+import org.pentaho.di.job.Job;
+import org.pentaho.di.job.JobMeta;
+import org.pentaho.di.repository.RepositoryDirectoryInterface;
+import org.pentaho.di.repository.pur.PurRepository;
+import org.pentaho.di.repository.pur.PurRepositoryLocation;
+import org.pentaho.di.repository.pur.PurRepositoryMeta;
+
+public class StartLocalJobTest {
+
+  public static final String STRING_LOG = "ExecuteTestJob";
+
+	public static void main(String[] args) throws Exception {
+
+		LogChannelInterface log = new LogChannel(STRING_LOG);
+		String jobName = "JOB_NAME";
+
+		KettleEnvironment.init(false);
+		System.setProperty("pentaho.installed.licenses.file",
+				"/home/fiorenzo/.pentaho/.installedLicenses.xml");
+
+		PurRepositoryLocation purRepositoryLocation = new PurRepositoryLocation(
+				"http://server.it:9080/pentaho-di");
+		PurRepositoryMeta repositoriesMeta = new PurRepositoryMeta(
+				"RepositoryPentahoEnterprise", "Repository", "Repository",
+				purRepositoryLocation, false);
+
+		PurRepository repository = new PurRepository();
+		repository.init(repositoriesMeta);
+		repository.connect("username", "password");
+		RepositoryDirectoryInterface directory = repository
+				.loadRepositoryDirectoryTree();
+		directory = directory.findDirectory("/public/folder/on_repository");
+
+		JobMeta jobMeta = new JobMeta();
+		jobMeta = repository.loadJob(jobName, directory, null, null);
+		log.logBasic("JobMeta Description: " + jobMeta.getDescription());
+		log.logBasic("JobMeta Version: " + jobMeta.getJobversion());
+		log.logBasic("JobMeta Modify Date: " + jobMeta.getModifiedDate());
+		log.logBasic("JobMeta Id: " + jobMeta.getObjectId().getId());
+
+		Job job = new Job(repository, jobMeta);
+		log.logBasic("Job Name: " + job.getJobname());
+
+		job.start();
+		job.waitUntilFinished();
+
+		log.logError("Job Log: " + job.getResult().getLogText());
+
+		if (job.getErrors() != 0) {
+			log.logError("Job Error: " + job.getErrors());
+			log.logError("Error encountered!");
+		}
+	}
+
+}
+
+
 ----
 
 
 Esecuzione in remoto (tramite schedulazione):
 
 ----
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.pentaho.di.cluster.SlaveServer;
+import org.pentaho.di.core.KettleEnvironment;
+import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.di.core.logging.LogChannel;
+import org.pentaho.di.core.logging.LogChannelInterface;
+import org.pentaho.di.job.Job;
+import org.pentaho.di.job.JobExecutionConfiguration;
+import org.pentaho.di.job.JobMeta;
+import org.pentaho.di.repository.RepositoryDirectoryInterface;
+import org.pentaho.di.repository.pur.PurRepository;
+import org.pentaho.di.repository.pur.PurRepositoryLocation;
+import org.pentaho.di.repository.pur.PurRepositoryMeta;
+
+public class StartRemoteJobTest {
+  public static final String STRING_LOG = "ExecuteGenericJob";
+
+	public static void main(String[] args) throws KettleException {
+		LogChannelInterface log = new LogChannel(STRING_LOG);
+		String jobName = "JOB_NAME";
+
+		KettleEnvironment.init(false);
+		System.setProperty("pentaho.installed.licenses.file",
+				"/where/they/are/.pentaho/.installedLicenses.xml");
+
+		PurRepositoryLocation purRepositoryLocation = new PurRepositoryLocation(
+				"http://server.it:9080/pentaho-di");
+		PurRepositoryMeta repositoriesMeta = new PurRepositoryMeta(
+				"RepositoryPentahoEnterprise", "Repository", "Repository",
+				purRepositoryLocation, false);
+
+		PurRepository repository = new PurRepository();
+		repository.init(repositoriesMeta);
+		repository.connect("username", "password");
+		RepositoryDirectoryInterface directory = repository
+				.loadRepositoryDirectoryTree();
+		directory = directory.findDirectory("/public/folder/on_repository");
+
+		JobMeta jobMeta = new JobMeta();
+		jobMeta = repository.loadJob(jobName, directory, null, null);
+		log.logBasic("JobMeta Description: " + jobMeta.getDescription());
+		log.logBasic("JobMeta Version: " + jobMeta.getJobversion());
+		log.logBasic("JobMeta Modify Date: " + jobMeta.getModifiedDate());
+		log.logBasic("JobMeta Id: " + jobMeta.getObjectId().getId());
+
+		Job job = new Job(repository, jobMeta);
+		log.logBasic("Job Name: " + job.getJobname());
+
+		JobExecutionConfiguration jobExecutionConfiguration = new JobExecutionConfiguration();
+		SlaveServer remoteServer = new SlaveServer("name", "server.it", "9080",
+				"username", "password");
+
+		remoteServer.setWebAppName("pentaho-di");
+		jobExecutionConfiguration.setRemoteServer(remoteServer);
+
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("parameterA", "valueA");
+		params.put("parameterB", "valueB");
+		jobExecutionConfiguration.setParams(params);
+		jobExecutionConfiguration.setRepository(repository);
+
+		String result = Job.sendToSlaveServer(jobMeta,
+				jobExecutionConfiguration, null);
+		log.logBasic("job uid : " + result);
+
+	}
+}
+
+----
+
+lettura dello stato del job schedulato
+
+----
+
+import org.pentaho.di.cluster.SlaveServer;
+import org.pentaho.di.core.KettleEnvironment;
+import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.di.core.logging.LogChannel;
+import org.pentaho.di.core.logging.LogChannelInterface;
+import org.pentaho.di.www.SlaveServerJobStatus;
+
+public class StatusRemoteJobTest {
+  public static final String STRING_LOG = "ExecuteGenericJob";
+
+	public static void main(String[] args) throws KettleException {
+		LogChannelInterface log = new LogChannel(STRING_LOG);
+		String jobName = "Costi";
+		String uid = "939813fc-f0e2-4913-9fba-ab8af5970ff8";
+
+		KettleEnvironment.init(false);
+		System.setProperty("pentaho.installed.licenses.file",
+				"/where/they/are/.pentaho/.installedLicenses.xml");
+
+		SlaveServer remoteServer = new SlaveServer("name", "server.it", "9080",
+				"username", "password");
+		remoteServer.setWebAppName("pentaho-di");
+
+		try {
+			SlaveServerJobStatus statusDescription = remoteServer.getJobStatus(
+					jobName, uid, 0);
+
+			log.logBasic("LoggingString: "
+					+ statusDescription.getLoggingString());
+			log.logBasic("ErrorDescription: "
+					+ statusDescription.getErrorDescription());
+			log.logBasic("StatusDescription: "
+					+ statusDescription.getStatusDescription());
+		} catch (Exception e) {
+			log.logBasic(e.getMessage());
+		}
+
+	}
+}
 
 ----
 
