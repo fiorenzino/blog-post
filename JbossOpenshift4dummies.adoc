@@ -1,0 +1,6 @@
+==openshift 4 dummies
+
+
+Creazione da web account, sign in, 
+creazione app
+Aggiunta card. righe
