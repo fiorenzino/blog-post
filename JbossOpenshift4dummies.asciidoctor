@@ -1,0 +1,42 @@
+= jboss+cloud=openshift
+Fiorenzo Pizza<fiorenzo.pizza@gmail.com>
+:imagesdir: assets
+:homepage: http://www.ict-group.it
+
+== jboss7 + cloud = openshift
+
+Per chi come me utilizza a fini professionali jboss dalla versione 4, l'arrivo di Openshift è stata 
+una delle soddisfazioni piu' grandi degli ultimi anni.
+Perchè? Che c'è di così innovativo?
+La risposta è semplice: per la prima volta abbiamo la possiblità di sviluppare applicazioni jee, usando jboss7+mysql,
+senza sbattimenti inutili! E' possibile avere uno spazio per il loro deploy, senza dover acquistare server dedicati, 
+senza preoccuparsi della gestione del server. E acquistando un dominio è possibile associare un alias alla 
+nostra applicazione (ad es. www.ict-group.it ==> site-ictgroup.rhcloud.com)
+
+== caratteristiche del servizio
+
+Cosa ci offre openshift gratuitamente? 
+1 macchina virtuale linux dedicata per ogni applicazione (con 1 account si possono creare fino a 3 applicazioni),
+512 mega di ram, 1 giga di spazio disco, un sistema di gestione delle applicazioni tramite tool a riga di 
+comando rhc-tools (dalla console web è possibile riavviare l'applicazione).
+
+La possibilità di installare pacchetti di applicazioni (chiamati cardridge) - di ns interesse jboss7 o jboss eap, mysql+phpmyadmin o 
+postgresql, mongodb,cron.
+
+E' inoltre possibile accedere alla macchina linux via ssh/sftp.
+
+
+== comandi utili
+
+come si accende/spegne/riaccende
+
+come si aggiungere un alias alla ns applicazione
+
+
+== installazione del client rhc su ubuntu
+
+. installiamo i programmi base: *sudo apt-get install git-core openssh-client ruby ruby-dev rubygems libopenssl-ruby*
+
+. installiamo i gems for OpenShift client tools (ad es. rhc*): *sudo gem install --source http://gems.rubyforge.org --source https://openshift.redhat.com/app/repo/ rhc*
+
+
