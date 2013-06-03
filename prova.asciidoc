@@ -13,6 +13,25 @@ blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah 
 blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah 
 blah blah blah blah blah blah blah blah blah blah blah blah blah 
 blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah 
+
+----
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="it" xml:lang="it" class="default">
+  <head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="chrome=1" />
+		<title>Arte Insieme 2013 | museo pietraia dei poeti</title>
+		<meta name="keywords" content="Arte Insieme 2013, pietraia dei poeti, arte contemporanea, collettiva, pittura, fotografia, scultura, poesia, danza, musica" />
+		<meta name="robots" content="all" />
+		<link rel="stylesheet" href="css/core.css" media="screen,projection,print" type="text/css" />
+		<link rel="stylesheet" href="css/core-stock.css" media="screen,projection,print" type="text/css" />
+		<link rel="stylesheet" href="css/stock.css" media="screen,projection,print" type="text/css" />
+		<link rel="stylesheet" href="css/modules.css" media="screen,projection" type="text/css" />
+		<meta name="description" content="Arte Insieme 2012 Collettiva di Artisti Sensibili, Museo Pietraia dei Poeti" />
+</head>
+
+----
 --
 . two
 . three
